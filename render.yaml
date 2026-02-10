@@ -1,0 +1,24 @@
+databases:
+  - name: alpha_db # CAMBIA ESTO (ej: mi-proyecto-db)
+    databaseName: rails_db # No cambies esto
+    user: rails_user       # No cambies esto
+    plan: free
+    region: oregon # O 'frankfurt' si estás en Europa
+
+services:
+  - type: web
+    name: alph_blog # CAMBIA ESTO (ej: mi-proyecto-web)
+    runtime: docker
+    region: oregon # Debe ser la misma región que la DB
+    plan: free
+    buildCommand: "./bin/rails assets:precompile"
+    startCommand: "./bin/rails server"
+    envVars:
+      - key: RAILS_MASTER_KEY
+        sync: false # Te la pedirá en el dashboard
+      - key: DATABASE_URL
+        fromDatabase:
+          name: alpha_db # Debe coincidir con el nombre de arriba
+          property: connectionString
+      - key: WEB_CONCURRENCY
+        value: 2
